@@ -1,499 +1,244 @@
-/* =========================================
-   🌈 HINDI TRANSLATOR — VIBY FINAL DESIGN
-   ========================================= */
+// ==========================================
+// 🌍 HINDI TRANSLATOR — JAVASCRIPT
+// ==========================================
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+const inputText = document.getElementById("inputText");
+const outputText = document.getElementById("outputText");
 
-html {
-    scroll-behavior: smooth;
-}
+const sourceLanguage = document.getElementById("sourceLanguage");
+const targetLanguage = document.getElementById("targetLanguage");
 
-body {
-    min-height: 100vh;
-    font-family: Arial, Helvetica, sans-serif;
-    color: white;
+const speakBtn = document.getElementById("speakBtn");
+const translateBtn = document.getElementById("translateBtn");
+const listenBtn = document.getElementById("listenBtn");
+const copyBtn = document.getElementById("copyBtn");
 
-    background:
-        radial-gradient(circle at 15% 20%, rgba(255, 0, 153, 0.35), transparent 30%),
-        radial-gradient(circle at 85% 15%, rgba(0, 229, 255, 0.35), transparent 30%),
-        radial-gradient(circle at 50% 90%, rgba(125, 70, 255, 0.35), transparent 35%),
-        linear-gradient(135deg, #09001f, #13083d 45%, #001c35);
+const status = document.getElementById("status");
 
-    background-attachment: fixed;
-    overflow-x: hidden;
+
+// ==========================================
+// STATUS MESSAGE
+// ==========================================
+
+function showStatus(message) {
+    status.textContent = message;
 }
 
 
-/* =========================================
-   HEADER
-   ========================================= */
+// ==========================================
+// 🎤 SPEAK BUTTON
+// ==========================================
 
-header {
-    width: 100%;
-    padding: 22px 7%;
+speakBtn.addEventListener("click", () => {
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    if (!("webkitSpeechRecognition" in window) &&
+        !("SpeechRecognition" in window)) {
 
-    background: rgba(8, 3, 25, 0.65);
+        showStatus("❌ Speech recognition is not supported here.");
+        return;
+    }
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
 
-    backdrop-filter: blur(18px);
-}
+    const recognition = new SpeechRecognition();
 
-.logo {
-    font-size: 24px;
-    font-weight: 900;
+    recognition.lang = sourceLanguage.value === "en"
+        ? "en-US"
+        : sourceLanguage.value;
 
-    text-shadow:
-        0 0 10px #00e5ff,
-        0 0 25px #8b5cf6;
-}
+    recognition.interimResults = false;
+    recognition.continuous = false;
 
-.tagline {
-    color: #cbd5e1;
-    font-size: 14px;
-}
+    showStatus("🎤 Listening... Speak now!");
+
+    recognition.start();
+
+    recognition.onresult = (event) => {
+
+        const spokenText =
+            event.results[0][0].transcript;
+
+        inputText.value = spokenText;
+
+        showStatus("✅ Speech captured!");
+    };
+
+    recognition.onerror = (event) => {
+
+        console.error(event.error);
+
+        showStatus(
+            "❌ Microphone error: " + event.error
+        );
+    };
+
+    recognition.onend = () => {
+
+        if (status.textContent === "🎤 Listening... Speak now!") {
+            showStatus("✨ Ready to translate");
+        }
+    };
+});
 
 
-/* =========================================
-   MAIN LAYOUT
-   ========================================= */
+// ==========================================
+// 🌐 TRANSLATE BUTTON
+// ==========================================
 
-.app {
-    width: min(1200px, 92%);
-    min-height: calc(100vh - 160px);
+translateBtn.addEventListener("click", async () => {
 
-    margin: auto;
+    const text = inputText.value.trim();
 
-    display: grid;
-    grid-template-columns: 0.85fr 1.4fr;
+    if (!text) {
+        showStatus("⚠️ Type or speak something first!");
+        return;
+    }
 
-    gap: 70px;
+    showStatus("🌐 Translating...");
 
-    align-items: center;
+    try {
 
-    padding: 65px 0;
-}
+        /*
+         * TEMPORARY TRANSLATION TEST
+         *
+         * This is NOT the final API.
+         * It proves that the button and JavaScript
+         * are working before we connect the API.
+         */
+
+        if (
+            sourceLanguage.value === "en" &&
+            targetLanguage.value === "hi"
+        ) {
+
+            const demoTranslations = {
+
+                "hello": "नमस्ते",
+                "hi": "नमस्ते",
+                "good morning": "सुप्रभात",
+                "good night": "शुभ रात्रि",
+                "thank you": "धन्यवाद",
+                "thanks": "धन्यवाद",
+                "how are you": "आप कैसे हैं?",
+                "my name is havish": "मेरा नाम हविश है",
+                "welcome": "स्वागत है"
+            };
+
+            const lowerText = text.toLowerCase();
+
+            if (demoTranslations[lowerText]) {
+
+                outputText.value =
+                    demoTranslations[lowerText];
+
+            } else {
+
+                outputText.value =
+                    "API translation will appear here.";
+            }
+
+        } else {
+
+            outputText.value =
+                "🌐 API translation will be connected here.";
+        }
+
+        showStatus("✅ Translation complete!");
+
+    } catch (error) {
+
+        console.error(error);
+
+        showStatus("❌ Translation failed.");
+    }
+});
 
 
-/* =========================================
-   HERO
-   ========================================= */
+// ==========================================
+// 🔊 LISTEN BUTTON
+// ==========================================
 
-.hero h1 {
-    font-size: clamp(45px, 5vw, 70px);
-    line-height: 1.02;
+listenBtn.addEventListener("click", () => {
 
-    margin-bottom: 24px;
+    const text = outputText.value.trim();
 
-    background:
-        linear-gradient(
-            90deg,
-            #ffffff,
-            #6ee7ff,
-            #c084fc,
-            #ff7ac8
+    if (!text) {
+
+        showStatus("⚠️ Nothing to listen to!");
+        return;
+    }
+
+    if (!("speechSynthesis" in window)) {
+
+        showStatus(
+            "❌ Your browser doesn't support speech."
         );
 
-    -webkit-background-clip: text;
-    background-clip: text;
-
-    color: transparent;
-}
-
-.hero p {
-    max-width: 480px;
-
-    color: #c7c9d9;
-
-    font-size: 18px;
-    line-height: 1.7;
-}
-
-
-/* =========================================
-   TRANSLATOR CARD
-   ========================================= */
-
-.translator-card {
-    padding: 30px;
-
-    border-radius: 30px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255,255,255,0.13),
-            rgba(255,255,255,0.055)
-        );
-
-    border: 1px solid rgba(255,255,255,0.2);
-
-    backdrop-filter: blur(25px);
-
-    box-shadow:
-        0 25px 70px rgba(0,0,0,0.45),
-        0 0 40px rgba(139,92,246,0.18);
-
-    transition: 0.3s ease;
-}
-
-.translator-card:hover {
-    transform: translateY(-6px);
-
-    border-color: rgba(0,229,255,0.5);
-
-    box-shadow:
-        0 30px 80px rgba(0,0,0,0.5),
-        0 0 50px rgba(0,229,255,0.18);
-}
-
-
-/* =========================================
-   LANGUAGE SELECTORS
-   ========================================= */
-
-.languages {
-    display: grid;
-
-    grid-template-columns: 1fr 45px 1fr;
-
-    gap: 12px;
-
-    align-items: end;
-
-    margin-bottom: 18px;
-}
-
-.languages label {
-    display: block;
-
-    margin-bottom: 7px;
-
-    font-size: 14px;
-    font-weight: bold;
-
-    color: #b9f5ff;
-}
-
-.languages select {
-    width: 100%;
-
-    padding: 13px;
-
-    border: 1px solid rgba(255,255,255,0.15);
-
-    border-radius: 13px;
-
-    background: rgba(10,8,35,0.9);
-
-    color: white;
-
-    font-size: 15px;
-
-    outline: none;
-
-    cursor: pointer;
-}
-
-.languages select:focus {
-    border-color: #00e5ff;
-
-    box-shadow:
-        0 0 18px rgba(0,229,255,0.25);
-}
-
-.arrow {
-    padding-bottom: 8px;
-
-    text-align: center;
-
-    color: #00e5ff;
-
-    font-size: 28px;
-
-    text-shadow:
-        0 0 15px #00e5ff;
-}
-
-
-/* =========================================
-   TEXT BOXES
-   ========================================= */
-
-textarea {
-    width: 100%;
-    height: 145px;
-
-    display: block;
-
-    margin-top: 15px;
-    padding: 18px;
-
-    resize: vertical;
-
-    border-radius: 19px;
-
-    border: 1px solid rgba(255,255,255,0.14);
-
-    outline: none;
-
-    background: rgba(5,3,25,0.75);
-
-    color: white;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size: 17px;
-    line-height: 1.5;
-
-    transition: 0.25s ease;
-}
-
-textarea::placeholder {
-    color: #8e93a8;
-}
-
-textarea:focus {
-    border-color: #00e5ff;
-
-    box-shadow:
-        0 0 22px rgba(0,229,255,0.18);
-}
-
-
-/* =========================================
-   BUTTONS
-   ========================================= */
-
-.buttons {
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 12px;
-
-    margin-top: 18px;
-}
-
-button {
-    padding: 15px;
-
-    border: 1px solid rgba(255,255,255,0.14);
-
-    border-radius: 15px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #7c3aed,
-            #2563eb
-        );
-
-    color: white;
-
-    font-size: 16px;
-    font-weight: 800;
-
-    cursor: pointer;
-
-    transition: 0.2s ease;
-
-    box-shadow:
-        0 8px 20px rgba(0,0,0,0.25);
-}
-
-button:hover {
-    transform: translateY(-4px);
-
-    background:
-        linear-gradient(
-            135deg,
-            #ec4899,
-            #06b6d4
-        );
-
-    box-shadow:
-        0 0 25px rgba(0,229,255,0.3);
-}
-
-button:active {
-    transform: scale(0.96);
-}
-
-
-/* =========================================
-   INDIVIDUAL BUTTON VIBES
-   ========================================= */
-
-#speakBtn {
-    background: linear-gradient(135deg, #ff4ecd, #7c3aed);
-}
-
-#translateBtn {
-    background: linear-gradient(135deg, #00bfff, #2563eb);
-}
-
-#listenBtn {
-    background: linear-gradient(135deg, #8b5cf6, #ec4899);
-}
-
-#copyBtn {
-    background: linear-gradient(135deg, #14b8a6, #06b6d4);
-}
-
-
-/* =========================================
-   STATUS
-   ========================================= */
-
-#status {
-    margin-top: 18px;
-
-    text-align: center;
-
-    color: #8ff6ff;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    text-shadow:
-        0 0 10px rgba(0,229,255,0.4);
-}
-
-
-/* =========================================
-   FOOTER
-   ========================================= */
-
-.developer-footer {
-    width: 100%;
-
-    padding: 32px 20px;
-
-    text-align: center;
-
-    background: rgba(5,2,20,0.72);
-
-    border-top: 1px solid rgba(255,255,255,0.12);
-
-    backdrop-filter: blur(15px);
-}
-
-.footer-logo {
-    margin-bottom: 10px;
-
-    font-size: 23px;
-    font-weight: 900;
-
-    text-shadow:
-        0 0 12px #00e5ff;
-}
-
-.developer-footer p {
-    margin: 7px 0;
-
-    color: #9ca3b8;
-
-    font-size: 14px;
-}
-
-.developer-footer .developer {
-    color: #e2e8f0;
-    font-size: 16px;
-}
-
-.developer strong {
-    color: #00e5ff;
-
-    text-shadow:
-        0 0 12px #00e5ff;
-}
-
-.copyright {
-    opacity: 0.55;
-}
-
-
-/* =========================================
-   📱 TABLET
-   ========================================= */
-
-@media (max-width: 850px) {
-
-    header {
-        padding: 20px 5%;
+        return;
     }
 
-    .tagline {
-        display: none;
+    speechSynthesis.cancel();
+
+    const speech = new SpeechSynthesisUtterance(text);
+
+    speech.lang = "hi-IN";
+    speech.rate = 0.9;
+    speech.pitch = 1;
+
+    speech.onstart = () => {
+        showStatus("🔊 Speaking Hindi...");
+    };
+
+    speech.onend = () => {
+        showStatus("✨ Finished speaking!");
+    };
+
+    speech.onerror = () => {
+        showStatus("❌ Couldn't speak the text.");
+    };
+
+    speechSynthesis.speak(speech);
+});
+
+
+// ==========================================
+// 📋 COPY BUTTON
+// ==========================================
+
+copyBtn.addEventListener("click", async () => {
+
+    const text = outputText.value.trim();
+
+    if (!text) {
+
+        showStatus("⚠️ Nothing to copy!");
+        return;
     }
 
-    .app {
-        grid-template-columns: 1fr;
+    try {
 
-        width: 92%;
+        await navigator.clipboard.writeText(text);
 
-        gap: 35px;
+        showStatus("📋 Copied!");
 
-        padding: 45px 0;
+    } catch (error) {
+
+        // Backup copy method
+        outputText.select();
+
+        document.execCommand("copy");
+
+        showStatus("📋 Copied!");
     }
-
-    .hero {
-        text-align: center;
-    }
-
-    .hero p {
-        margin: auto;
-    }
-
-    .translator-card {
-        width: 100%;
-    }
-}
+});
 
 
-/* =========================================
-   📱 SMALL SCREEN
-   ========================================= */
+// ==========================================
+// ✨ READY
+// ==========================================
 
-@media (max-width: 500px) {
+showStatus("✨ Ready to translate");
 
-    .hero h1 {
-        font-size: 40px;
-    }
-
-    .hero p {
-        font-size: 16px;
-    }
-
-    .translator-card {
-        padding: 20px;
-        border-radius: 23px;
-    }
-
-    .languages {
-        grid-template-columns: 1fr;
-    }
-
-    .arrow {
-        display: none;
-    }
-
-    textarea {
-        height: 130px;
-        font-size: 15px;
-    }
-
-    button {
-        padding: 13px 8px;
-        font-size: 14px;
-    }
-}
+console.log("🌍 Hindi Translator JavaScript loaded!");
