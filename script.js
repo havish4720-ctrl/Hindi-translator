@@ -84,7 +84,7 @@ speakBtn.addEventListener("click", () => {
 
 
 // ==========================================
-// 🌐 TRANSLATE BUTTON
+// 🌐 TRANSLATE BUTTON — REAL API
 // ==========================================
 
 translateBtn.addEventListener("click", async () => {
@@ -100,50 +100,32 @@ translateBtn.addEventListener("click", async () => {
 
     try {
 
-        /*
-         * TEMPORARY TRANSLATION TEST
-         *
-         * This is NOT the final API.
-         * It proves that the button and JavaScript
-         * are working before we connect the API.
-         */
+        const response = await fetch(
+            "https://hindi-translator-api.onrender.com/translate",
+            {
+                method: "POST",
 
-        if (
-            sourceLanguage.value === "en" &&
-            targetLanguage.value === "hi"
-        ) {
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-            const demoTranslations = {
-
-                "hello": "नमस्ते",
-                "hi": "नमस्ते",
-                "good morning": "सुप्रभात",
-                "good night": "शुभ रात्रि",
-                "thank you": "धन्यवाद",
-                "thanks": "धन्यवाद",
-                "how are you": "आप कैसे हैं?",
-                "my name is havish": "मेरा नाम हविश है",
-                "welcome": "स्वागत है"
-            };
-
-            const lowerText = text.toLowerCase();
-
-            if (demoTranslations[lowerText]) {
-
-                outputText.value =
-                    demoTranslations[lowerText];
-
-            } else {
-
-                outputText.value =
-                    "API translation will appear here.";
+                body: JSON.stringify({
+                    q: text,
+                    source: sourceLanguage.value,
+                    target: targetLanguage.value
+                })
             }
+        );
 
-        } else {
+        const data = await response.json();
 
-            outputText.value =
-                "🌐 API translation will be connected here.";
+        if (!response.ok) {
+            throw new Error(
+                data.error || "Translation failed"
+            );
         }
+
+        outputText.value = data.translatedText;
 
         showStatus("✅ Translation complete!");
 
@@ -151,9 +133,15 @@ translateBtn.addEventListener("click", async () => {
 
         console.error(error);
 
-        showStatus("❌ Translation failed.");
+        outputText.value = "";
+
+        showStatus(
+            "❌ Translation failed. Please try again."
+        );
     }
 });
+
+        
 
 
 // ==========================================
