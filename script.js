@@ -25,25 +25,12 @@ function showStatus(message) {
 }
 
 
-// ==========================================
-// 🌐 TRANSLATE
-// ==========================================
-
-translateBtn.addEventListener("click", async () => {
+// translateBtn.addEventListener("click", async () => {
 
     const text = inputText.value.trim();
 
-    const from = sourceLanguage.value;
-    const to = targetLanguage.value;
-
     if (!text) {
         showStatus("⚠️ Type or speak something first!");
-        return;
-    }
-
-    if (from === to) {
-        outputText.value = text;
-        showStatus("✅ Translation complete!");
         return;
     }
 
@@ -51,36 +38,28 @@ translateBtn.addEventListener("click", async () => {
 
     try {
 
-        const url =
-            "https://translate.googleapis.com/translate_a/single" +
-            "?client=gtx" +
-            "&sl=" + encodeURIComponent(from) +
-            "&tl=" + encodeURIComponent(to) +
-            "&dt=t" +
-            "&q=" + encodeURIComponent(text);
+        const response = await fetch(
+            "https://hindi-translator-api-26.havishkumarsingh.workers.dev",
+            {
+                method: "POST",
 
-        const response = await fetch(url);
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-        if (!response.ok) {
-            throw new Error("Translation request failed");
-        }
+                body: JSON.stringify({
+                    text: text
+                })
+            }
+        );
 
         const data = await response.json();
 
-        if (!data || !data[0]) {
-            throw new Error("No translation received");
+        if (!response.ok) {
+            throw new Error(data.error || "Translation failed");
         }
 
-        const translation = data[0]
-            .map(item => item[0])
-            .filter(Boolean)
-            .join("");
-
-        if (!translation) {
-            throw new Error("Empty translation");
-        }
-
-        outputText.value = translation;
+        outputText.value = data.translatedText;
 
         showStatus("✅ Translation complete!");
 
@@ -90,12 +69,10 @@ translateBtn.addEventListener("click", async () => {
 
         outputText.value = "";
 
-        showStatus(
-            "❌ Translation failed. Try again."
-        );
+        showStatus("❌ Translation failed.");
+
     }
 });
-
 
 // ==========================================
 // 🎤 SPEAK / VOICE INPUT
