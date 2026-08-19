@@ -608,6 +608,4 @@ textarea::placeholder {
         letter-spacing: -1px;
     }
 }
-body {
-    background: red !important;
-}
+
