@@ -1,439 +1,614 @@
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    margin: 0;
     min-height: 100vh;
 
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
+
+    color: #f4ffff;
+
+    background:
+        radial-gradient(circle at 15% 20%, rgba(0, 210, 255, 0.18), transparent 30%),
+        radial-gradient(circle at 85% 80%, rgba(0, 120, 255, 0.18), transparent 30%),
+        linear-gradient(135deg, #020408, #071018, #020408);
+
+    overflow-x: hidden;
+}
+
+
+/* ==========================================
+   HEADER
+========================================== */
+
+header {
+    padding: 24px 7%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-bottom: 1px solid rgba(61, 211, 255, 0.18);
+
+    background: rgba(2, 6, 12, 0.75);
+
+    backdrop-filter: blur(12px);
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: 800;
+
+    color: #65edff;
+
+    letter-spacing: 0.5px;
+
+    text-shadow:
+        0 0 12px rgba(0, 220, 255, 0.55);
+}
+
+.tagline {
+    color: #7d9ba8;
+
+    font-size: 13px;
+
+    letter-spacing: 1px;
+}
+
+
+/* ==========================================
+   MAIN
+========================================== */
+
+.app {
+    width: min(900px, 92%);
+
+    margin: 0 auto;
+
+    padding: 65px 0 50px;
+}
+
+
+/* ==========================================
+   HERO
+========================================== */
+
+.hero {
+    text-align: center;
+
+    margin-bottom: 38px;
+}
+
+.hero h1 {
+    font-size: clamp(38px, 7vw, 68px);
+
+    line-height: 1.02;
+
+    font-weight: 900;
+
+    letter-spacing: -2px;
 
     background:
         linear-gradient(
-            135deg,
-            #050816,
-            #0b2638,
-            #07111f
+            90deg,
+            #ffffff,
+            #5eeeff,
+            #5d9dff,
+            #ffffff
         );
 
-    color: white;
+    background-size: 250% auto;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    -webkit-background-clip: text;
+    background-clip: text;
 
-    padding: 20px;
+    color: transparent;
+
+    animation: gradientMove 5s linear infinite;
+
+    text-shadow:
+        0 0 35px rgba(42, 206, 255, 0.18);
 }
 
-.app {
-    width: 100%;
-    max-width: 700px;
+.hero p {
+    max-width: 560px;
 
-    background: rgba(5, 12, 25, 0.95);
+    margin: 20px auto 0;
 
-    border: 1px solid #1c5364;
-
-    border-radius: 24px;
-
-    padding: 25px;
-
-    box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.5);
-}
-
-h1 {
-    text-align: center;
-
-    margin: 0;
-
-    color: #73f5df;
-
-    font-size: 32px;
-}
-
-.subtitle {
-    text-align: center;
-
-    color: #8aa8b5;
-
-    margin-bottom: 25px;
-}
-
-textarea {
-    width: 100%;
-
-    height: 150px;
-
-    resize: none;
-
-    padding: 15px;
-
-    border-radius: 14px;
-
-    border: 1px solid #275363;
-
-    background: #020711;
-
-    color: white;
+    color: #89a8b5;
 
     font-size: 16px;
 
-    outline: none;
+    line-height: 1.7;
 }
 
-textarea:focus {
-    border-color: #4de1cf;
+
+/* ==========================================
+   TRANSLATOR CARD
+========================================== */
+
+.translator-card {
+    position: relative;
+
+    padding: 28px;
+
+    border-radius: 26px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(12, 20, 28, 0.98),
+            rgba(3, 8, 14, 0.98)
+        );
+
+    border: 1px solid rgba(60, 212, 255, 0.25);
+
+    box-shadow:
+        0 25px 80px rgba(0, 0, 0, 0.55),
+        0 0 45px rgba(0, 180, 255, 0.07);
+
+    overflow: hidden;
 }
 
-textarea::placeholder {
-    color: #58717d;
+.translator-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 10%;
+
+    width: 80%;
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #42eaff,
+            transparent
+        );
+
+    box-shadow:
+        0 0 15px #42eaff;
 }
+
+
+/* ==========================================
+   LANGUAGES
+========================================== */
 
 .languages {
     display: flex;
 
-    align-items: center;
+    align-items: end;
 
-    gap: 12px;
+    gap: 16px;
 
-    margin: 18px 0;
+    margin-bottom: 20px;
 }
 
-select {
+.languages > div:not(.arrow) {
     flex: 1;
+}
 
-    padding: 13px;
+.languages label {
+    display: block;
 
-    border-radius: 11px;
+    margin-bottom: 8px;
 
-    border: 1px solid #275363;
+    color: #65dff2;
 
-    background: #020711;
+    font-size: 12px;
 
-    color: white;
+    font-weight: 700;
+
+    letter-spacing: 1px;
+}
+
+.arrow {
+    padding-bottom: 11px;
+
+    color: #50e9ff;
+
+    font-size: 25px;
+
+    text-shadow:
+        0 0 15px rgba(50, 220, 255, 0.7);
+}
+
+
+/* ==========================================
+   SELECTS
+========================================== */
+
+select {
+    width: 100%;
+
+    padding: 14px 15px;
+
+    border-radius: 13px;
+
+    border: 1px solid #20485a;
+
+    background: #050a10;
+
+    color: #eaffff;
 
     font-size: 14px;
 
     outline: none;
-}
-
-.languages span {
-    color: #64e7d6;
-
-    font-size: 24px;
-}
-
-button {
-    border: none;
-
-    border-radius: 11px;
-
-    padding: 13px;
-
-    font-size: 15px;
-
-    font-weight: bold;
 
     cursor: pointer;
 
-    transition: 0.2s;
-}
-
-button:hover {
-    transform: translateY(-2px);
-}
-
-button:active {
-    transform: scale(0.97);
-}
-
-.main-buttons {
-    display: flex;
-
-    gap: 10px;
-
-    margin-bottom: 18px;
-}
-
-.main-buttons button {
-    flex: 1;
-
-    background: #20cdb9;
-
-    color: #021417;
-}
-
-#translateBtn {
-    background: #2bc4e8;
-}
-
-.action-buttons {
-    display: flex;
-
-    gap: 10px;
-
-    margin-top: 12px;
-}
-
-.action-buttons button {
-    flex: 1;
-
-    background: #092936;
-
-    color: #dfffff;
-
-    border: 1px solid #28606c;
-}
-
-#status {
-    text-align: center;
-
-    color: #6f929e;
-
-    font-size: 13px;
-
-    margin-top: 16px;
-}
-
-@media (max-width: 550px) {
-
-    body {
-        padding: 12px;
-    }
-
-    .app {
-        padding: 18px;
-    }
-
-    h1 {
-        font-size: 27px;
-    }
-
-    .languages {
-        gap: 7px;
-    }
-
-    select {
-        font-size: 12px;
-    }
-
-}* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    min-height: 100vh;
-
-    font-family: Arial, sans-serif;
-
-    background:
-        linear-gradient(
-            135deg,
-            #050816,
-            #0b2638,
-            #07111f
-        );
-
-    color: white;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    padding: 20px;
-}
-
-.app {
-    width: 100%;
-    max-width: 700px;
-
-    background: rgba(5, 12, 25, 0.95);
-
-    border: 1px solid #1c5364;
-
-    border-radius: 24px;
-
-    padding: 25px;
+    transition:
+        0.25s ease;
 
     box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.5);
+        inset 0 0 18px rgba(0, 0, 0, 0.35);
 }
 
-h1 {
-    text-align: center;
+select:hover {
+    border-color: #39dfff;
 
-    margin: 0;
-
-    color: #73f5df;
-
-    font-size: 32px;
+    box-shadow:
+        0 0 18px rgba(30, 210, 255, 0.15);
 }
 
-.subtitle {
-    text-align: center;
+select:focus {
+    border-color: #54edff;
 
-    color: #8aa8b5;
-
-    margin-bottom: 25px;
+    box-shadow:
+        0 0 0 3px rgba(50, 220, 255, 0.08),
+        0 0 20px rgba(50, 220, 255, 0.16);
 }
+
+
+/* ==========================================
+   TEXT AREAS
+========================================== */
 
 textarea {
     width: 100%;
 
-    height: 150px;
+    min-height: 155px;
 
-    resize: none;
+    resize: vertical;
 
-    padding: 15px;
+    display: block;
 
-    border-radius: 14px;
+    padding: 18px;
 
-    border: 1px solid #275363;
+    margin-top: 14px;
 
-    background: #020711;
+    border-radius: 17px;
 
-    color: white;
+    border: 1px solid #1e4352;
+
+    background:
+        linear-gradient(
+            145deg,
+            #03070c,
+            #070d13
+        );
+
+    color: #efffff;
+
+    font-family: inherit;
 
     font-size: 16px;
 
+    line-height: 1.6;
+
     outline: none;
+
+    transition:
+        0.25s ease;
+
+    box-shadow:
+        inset 0 0 25px rgba(0, 0, 0, 0.35);
+}
+
+textarea:first-of-type {
+    margin-top: 0;
 }
 
 textarea:focus {
-    border-color: #4de1cf;
+    border-color: #39ddff;
+
+    box-shadow:
+        0 0 0 3px rgba(39, 220, 255, 0.07),
+        0 0 25px rgba(39, 220, 255, 0.12),
+        inset 0 0 25px rgba(0, 0, 0, 0.35);
 }
 
 textarea::placeholder {
-    color: #58717d;
+    color: #55717c;
 }
 
-.languages {
-    display: flex;
 
-    align-items: center;
+/* ==========================================
+   BUTTONS
+========================================== */
 
-    gap: 12px;
+.buttons {
+    display: grid;
 
-    margin: 18px 0;
-}
+    grid-template-columns:
+        repeat(4, 1fr);
 
-select {
-    flex: 1;
-
-    padding: 13px;
-
-    border-radius: 11px;
-
-    border: 1px solid #275363;
-
-    background: #020711;
-
-    color: white;
-
-    font-size: 14px;
-
-    outline: none;
-}
-
-.languages span {
-    color: #64e7d6;
-
-    font-size: 24px;
-}
-
-button {
-    border: none;
-
-    border-radius: 11px;
-
-    padding: 13px;
-
-    font-size: 15px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-
-    transition: 0.2s;
-}
-
-button:hover {
-    transform: translateY(-2px);
-}
-
-button:active {
-    transform: scale(0.97);
-}
-
-.main-buttons {
-    display: flex;
-
-    gap: 10px;
-
-    margin-bottom: 18px;
-}
-
-.main-buttons button {
-    flex: 1;
-
-    background: #20cdb9;
-
-    color: #021417;
-}
-
-#translateBtn {
-    background: #2bc4e8;
-}
-
-.action-buttons {
-    display: flex;
-
-    gap: 10px;
-
-    margin-top: 12px;
-}
-
-.action-buttons button {
-    flex: 1;
-
-    background: #092936;
-
-    color: #dfffff;
-
-    border: 1px solid #28606c;
-}
-
-#status {
-    text-align: center;
-
-    color: #6f929e;
-
-    font-size: 13px;
+    gap: 11px;
 
     margin-top: 16px;
 }
 
-@media (max-width: 550px) {
+.buttons button {
+    position: relative;
 
-    body {
-        padding: 12px;
+    padding: 14px 10px;
+
+    border-radius: 13px;
+
+    border: 1px solid #21566a;
+
+    background:
+        linear-gradient(
+            145deg,
+            #0c222d,
+            #07131b
+        );
+
+    color: #dfffff;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+
+    overflow: hidden;
+}
+
+
+/* Shine */
+
+.buttons button::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: -120%;
+
+    width: 80%;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.18),
+            transparent
+        );
+
+    transform: skewX(-20deg);
+
+    transition:
+        left 0.45s ease;
+}
+
+.buttons button:hover::before {
+    left: 140%;
+}
+
+
+/* Hover */
+
+.buttons button:hover {
+    transform:
+        translateY(-4px)
+        scale(1.02);
+
+    border-color: #45e6ff;
+
+    background:
+        linear-gradient(
+            145deg,
+            #0d3545,
+            #09202b
+        );
+
+    box-shadow:
+        0 8px 25px rgba(0, 210, 255, 0.15),
+        0 0 18px rgba(0, 210, 255, 0.1);
+}
+
+
+/* Click */
+
+.buttons button:active {
+    transform:
+        translateY(1px)
+        scale(0.97);
+
+    box-shadow:
+        0 0 8px rgba(0, 220, 255, 0.2);
+}
+
+
+/* ==========================================
+   SPECIAL TRANSLATE BUTTON
+========================================== */
+
+#translateBtn {
+    color: #021116;
+
+    border: none;
+
+    background:
+        linear-gradient(
+            135deg,
+            #39e7ff,
+            #278dff
+        );
+
+    box-shadow:
+        0 0 20px rgba(30, 190, 255, 0.15);
+}
+
+#translateBtn:hover {
+    background:
+        linear-gradient(
+            135deg,
+            #64efff,
+            #3ba1ff
+        );
+
+    box-shadow:
+        0 8px 30px rgba(30, 190, 255, 0.3),
+        0 0 25px rgba(30, 190, 255, 0.2);
+}
+
+
+/* ==========================================
+   STATUS
+========================================== */
+
+#status {
+    min-height: 20px;
+
+    margin-top: 17px;
+
+    text-align: center;
+
+    color: #6f9aa8;
+
+    font-size: 13px;
+
+    letter-spacing: 0.3px;
+
+    transition:
+        0.25s ease;
+}
+
+
+/* ==========================================
+   FOOTER
+========================================== */
+
+.developer-footer {
+    text-align: center;
+
+    padding: 35px 20px 30px;
+
+    border-top: 1px solid rgba(60, 212, 255, 0.1);
+
+    color: #55727d;
+
+    font-size: 12px;
+
+    background:
+        rgba(1, 4, 8, 0.65);
+}
+
+.footer-logo {
+    margin-bottom: 9px;
+
+    color: #66eaff;
+
+    font-size: 16px;
+
+    font-weight: 800;
+}
+
+.developer {
+    margin-top: 9px;
+}
+
+.developer strong {
+    color: #8eefff;
+}
+
+.copyright {
+    margin-top: 7px;
+
+    color: #405964;
+}
+
+
+/* ==========================================
+   ANIMATION
+========================================== */
+
+@keyframes gradientMove {
+
+    0% {
+        background-position: 0% 50%;
     }
 
-    .app {
-        padding: 18px;
+    50% {
+        background-position: 100% 50%;
     }
 
-    h1 {
-        font-size: 27px;
+    100% {
+        background-position: 0% 50%;
     }
+}
 
-    .languages {
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 650px) {
+
+    header {
+        padding: 18px 5%;
+
+        flex-direction: column;
+
         gap: 7px;
     }
 
-    select {
-        font-size: 12px;
+    .tagline {
+        font-size: 11px;
     }
 
+    .app {
+        width: 94%;
+
+        padding-top: 40px;
+    }
+
+    .translator-card {
+        padding: 18px;
+
+        border-radius: 20px;
+    }
+
+    .languages {
+        gap: 8px;
+    }
+
+    .arrow {
+        font-size: 19px;
+    }
+
+    .buttons {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .hero h1 {
+        letter-spacing: -1px;
+    }
 }
