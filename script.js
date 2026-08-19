@@ -1,5 +1,5 @@
 // ==========================================
-// 🌍 HINDI TRANSLATOR — JAVASCRIPT
+// 🌍 HINDI TRANSLATOR — SCRIPT
 // ==========================================
 
 const inputText = document.getElementById("inputText");
@@ -17,7 +17,7 @@ const status = document.getElementById("status");
 
 
 // ==========================================
-// STATUS MESSAGE
+// STATUS
 // ==========================================
 
 function showStatus(message) {
@@ -26,32 +26,105 @@ function showStatus(message) {
 
 
 // ==========================================
-// 🎤 SPEAK BUTTON
+// 🌐 TRANSLATE
+// ==========================================
+
+translateBtn.addEventListener("click", async () => {
+
+    const text = inputText.value.trim();
+
+    const from = sourceLanguage.value;
+    const to = targetLanguage.value;
+
+    if (!text) {
+        showStatus("⚠️ Type or speak something first!");
+        return;
+    }
+
+    if (from === to) {
+        outputText.value = text;
+        showStatus("✅ Translation complete!");
+        return;
+    }
+
+    showStatus("🌐 Translating...");
+
+    try {
+
+        const url =
+            "https://translate.googleapis.com/translate_a/single" +
+            "?client=gtx" +
+            "&sl=" + encodeURIComponent(from) +
+            "&tl=" + encodeURIComponent(to) +
+            "&dt=t" +
+            "&q=" + encodeURIComponent(text);
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error("Translation request failed");
+        }
+
+        const data = await response.json();
+
+        if (!data || !data[0]) {
+            throw new Error("No translation received");
+        }
+
+        const translation = data[0]
+            .map(item => item[0])
+            .filter(Boolean)
+            .join("");
+
+        if (!translation) {
+            throw new Error("Empty translation");
+        }
+
+        outputText.value = translation;
+
+        showStatus("✅ Translation complete!");
+
+    } catch (error) {
+
+        console.error(error);
+
+        outputText.value = "";
+
+        showStatus(
+            "❌ Translation failed. Try again."
+        );
+    }
+});
+
+
+// ==========================================
+// 🎤 SPEAK / VOICE INPUT
 // ==========================================
 
 speakBtn.addEventListener("click", () => {
-
-    if (!("webkitSpeechRecognition" in window) &&
-        !("SpeechRecognition" in window)) {
-
-        showStatus("❌ Speech recognition is not supported here.");
-        return;
-    }
 
     const SpeechRecognition =
         window.SpeechRecognition ||
         window.webkitSpeechRecognition;
 
+    if (!SpeechRecognition) {
+        showStatus(
+            "❌ Speech recognition isn't supported."
+        );
+        return;
+    }
+
     const recognition = new SpeechRecognition();
 
-    recognition.lang = sourceLanguage.value === "en"
-        ? "en-US"
-        : sourceLanguage.value;
+    recognition.lang =
+        sourceLanguage.value === "en"
+            ? "en-US"
+            : sourceLanguage.value;
 
     recognition.interimResults = false;
     recognition.continuous = false;
 
-    showStatus("🎤 Listening... Speak now!");
+    showStatus("🎤 Listening...");
 
     recognition.start();
 
@@ -76,73 +149,18 @@ speakBtn.addEventListener("click", () => {
 
     recognition.onend = () => {
 
-        if (status.textContent === "🎤 Listening... Speak now!") {
-            showStatus("✨ Ready to translate");
+        if (
+            status.textContent ===
+            "🎤 Listening..."
+        ) {
+            showStatus("✨ Ready!");
         }
     };
-// ==========================================
-// 🌐 TRANSLATE BUTTON — CLOUDFLARE WORKER
-// ==========================================
-
-translateBtn.addEventListener("click", async () => {
-
-    const text = inputText.value.trim();
-
-    if (!text) {
-        showStatus("⚠️ Type or speak something first!");
-        return;
-    }
-
-    showStatus("🌐 Translating...");
-
-    try {
-
-        const response = await fetch(
-            "https://hindi-translator-api-26.havishkumarsingh.workers.dev",
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-                    text: text,
-                    source: sourceLanguage.value,
-                    target: targetLanguage.value
-                })
-            }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(
-                data.error || "Translation failed"
-            );
-        }
-
-        outputText.value = data.translatedText;
-
-        showStatus("✅ Translation complete!");
-
-    } catch (error) {
-
-        console.error(error);
-
-        outputText.value = "";
-
-        showStatus(
-            "❌ Translation failed. Please try again."
-        );
-    }
 });
 
-        
-
 
 // ==========================================
-// 🔊 LISTEN BUTTON
+// 🔊 LISTEN / TEXT TO SPEECH
 // ==========================================
 
 listenBtn.addEventListener("click", () => {
@@ -150,30 +168,32 @@ listenBtn.addEventListener("click", () => {
     const text = outputText.value.trim();
 
     if (!text) {
-
         showStatus("⚠️ Nothing to listen to!");
         return;
     }
 
     if (!("speechSynthesis" in window)) {
-
         showStatus(
-            "❌ Your browser doesn't support speech."
+            "❌ Speech isn't supported here."
         );
-
         return;
     }
 
     speechSynthesis.cancel();
 
-    const speech = new SpeechSynthesisUtterance(text);
+    const speech =
+        new SpeechSynthesisUtterance(text);
 
-    speech.lang = "hi-IN";
+    speech.lang =
+        targetLanguage.value === "hi"
+            ? "hi-IN"
+            : targetLanguage.value;
+
     speech.rate = 0.9;
     speech.pitch = 1;
 
     speech.onstart = () => {
-        showStatus("🔊 Speaking Hindi...");
+        showStatus("🔊 Speaking...");
     };
 
     speech.onend = () => {
@@ -189,7 +209,7 @@ listenBtn.addEventListener("click", () => {
 
 
 // ==========================================
-// 📋 COPY BUTTON
+// 📋 COPY
 // ==========================================
 
 copyBtn.addEventListener("click", async () => {
@@ -197,7 +217,6 @@ copyBtn.addEventListener("click", async () => {
     const text = outputText.value.trim();
 
     if (!text) {
-
         showStatus("⚠️ Nothing to copy!");
         return;
     }
@@ -206,24 +225,12 @@ copyBtn.addEventListener("click", async () => {
 
         await navigator.clipboard.writeText(text);
 
-        showStatus("📋 Copied!");
+        showStatus("📋 Copied successfully!");
 
     } catch (error) {
 
-        // Backup copy method
-        outputText.select();
+        console.error(error);
 
-        document.execCommand("copy");
-
-        showStatus("📋 Copied!");
+        showStatus("❌ Couldn't copy.");
     }
 });
-
-
-// ==========================================
-// ✨ READY
-// ==========================================
-
-showStatus("✨ Ready to translate");
-
-console.log("🌍 Hindi Translator JavaScript loaded!");
