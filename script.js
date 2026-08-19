@@ -80,11 +80,8 @@ speakBtn.addEventListener("click", () => {
             showStatus("✨ Ready to translate");
         }
     };
-});
-
-
 // ==========================================
-// 🌐 TRANSLATE BUTTON — REAL API
+// 🌐 TRANSLATE BUTTON — CLOUDFLARE WORKER
 // ==========================================
 
 translateBtn.addEventListener("click", async () => {
@@ -101,7 +98,7 @@ translateBtn.addEventListener("click", async () => {
     try {
 
         const response = await fetch(
-            "https://hindi-translator-api.onrender.com/translate",
+            "https://hindi-translator-api-26.havishkumarsingh.workers.dev",
             {
                 method: "POST",
 
@@ -110,7 +107,7 @@ translateBtn.addEventListener("click", async () => {
                 },
 
                 body: JSON.stringify({
-                    q: text,
+                    text: text,
                     source: sourceLanguage.value,
                     target: targetLanguage.value
                 })
