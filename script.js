@@ -127,40 +127,95 @@ speakBtn.onclick = function() {
 // 🔊 LISTEN
 // ================================
 
-listenBtn.onclick = function() {
-    
+listenBtn.onclick = function () {
+
     const text = outputText.value.trim();
-    
+
     if (!text) {
         status.textContent =
             "⚠️ Nothing to listen to!";
         return;
     }
-    
-    speechSynthesis.cancel();
-    
-    const speech =
-        new SpeechSynthesisUtterance(text);
-    
-    speech.lang = "hi-IN";
-    speech.rate = 0.9;
-    
-    speech.onstart = function() {
-        status.textContent = "🔊 Speaking Hindi...";
-    };
-    
-    speech.onend = function() {
-        status.textContent = "✨ Finished!";
-    };
-    
-    speech.onerror = function() {
-        status.textContent =
-            "❌ Couldn't speak.";
-    };
-    
-    speechSynthesis.speak(speech);
-};
 
+    if (!("speechSynthesis" in window)) {
+        status.textContent =
+            "❌ Text-to-speech is not supported.";
+        return;
+    }
+
+    // Stop previous speech
+    speechSynthesis.cancel();
+
+    const speak = function () {
+
+        const voices = speechSynthesis.getVoices();
+
+        // Try to find a Hindi voice
+        const hindiVoice =
+            voices.find(voice =>
+                voice.lang.toLowerCase() === "hi-in"
+            ) ||
+            voices.find(voice =>
+                voice.lang.toLowerCase().startsWith("hi")
+            );
+
+        const speech =
+            new SpeechSynthesisUtterance(text);
+
+        speech.lang = "hi-IN";
+        speech.rate = 0.9;
+        speech.pitch = 1;
+
+        if (hindiVoice) {
+            speech.voice = hindiVoice;
+            status.textContent =
+                "🔊 Speaking Hindi...";
+        } else {
+            status.textContent =
+                "🔊 Speaking...";
+        }
+
+        speech.onstart = function () {
+            status.textContent =
+                "🔊 Speaking Hindi...";
+        };
+
+        speech.onend = function () {
+            status.textContent =
+                "✨ Finished!";
+        };
+
+        speech.onerror = function (event) {
+            console.error(
+                "Speech error:",
+                event.error
+            );
+
+            status.textContent =
+                "❌ Couldn't speak.";
+        };
+
+        speechSynthesis.speak(speech);
+    };
+
+    // Some browsers load voices asynchronously
+    const voices =
+        speechSynthesis.getVoices();
+
+    if (voices.length > 0) {
+        speak();
+    } else {
+
+        speechSynthesis.onvoiceschanged =
+            function () {
+
+                speechSynthesis.onvoiceschanged =
+                    null;
+
+                speak();
+            };
+    }
+};
 
 // ================================
 // 📋 COPY
